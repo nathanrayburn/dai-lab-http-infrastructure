@@ -1,8 +1,29 @@
-## Etape 0
-[Github dai-http-infra](https://github.com/nathanrayburn/dai-lab-http-infrastructure)
-## Etape 1
+# Rapport mise en service
+# Table des matières
 
-### Create Docker File
+- [Etape 0](#etape-0)
+- [Etape 1](#etape-1)
+    - [Create Docker File](#create-docker-file)
+  - [Create nginx configuration file](#create-nginx-configuration-file)
+  - [Build le container](#build-le-container)
+  - [Run le container](#run-le-container)
+  - [Tailwind CSS](#tailwind-css)
+    - [Install Tailwind css](#install-tailwind-css)
+    - [Configuration of the template](#configuration-of-the-template)
+    - [Add Tailwind directives to css](#add-tailwind-directives-to-css)
+    - [Start the Tailwind CLI build](#start-the-tailwind-cli-build)
+- [Etape 2](#etape-2)
+  - [Create Docker compose file](#create-docker-compose-file)
+  - [Build Docker Compose](#build-docker-compose)
+  - [Run Docker Compose](#run-docker-compose)
+- [Etape 3](#etape-3)
+
+# Etape 0
+[Github dai-http-infra](https://github.com/nathanrayburn/dai-lab-http-infrastructure)
+
+# Etape 1
+
+## Create Docker File
 
 Remarque
 
@@ -21,7 +42,7 @@ services:
       - ENV_VARIABLE=value 
 ```
 
-### Create nginx configuration  file
+## Create nginx configuration  file
 
 ```
 user nginx;
@@ -62,16 +83,16 @@ Run le container
 docker run -p 8080:80 nginx-custom
 ```
 
-### Tailwind CSS
+## Tailwind CSS
 
-#### Install Tailwind css
+### Install Tailwind css
 
 ```
 npm install -D tailwindcss
 npx tailwindcss init
 ```
 
-#### Configurataion of the template
+### Configurataion of the template
 
 `tailwind.config.js`
 
@@ -85,7 +106,7 @@ module.exports = {
   plugins: [],
 }
 ```
-#### Add Tailwind directives to css
+### Add Tailwind directives to css
 
 `src/input.css`
 
@@ -95,14 +116,14 @@ module.exports = {
 @tailwind utilities;
 ```
 
-#### Start the Tailwind CLI build
+### Start the Tailwind CLI build
 
 ```
 npx tailwindcss -i ./src/input.css -o ./dist/output.css --watch
 ```
-## Etape 2
+# Etape 2
 
-### Create Docker compose file
+## Create Docker compose file
 
 `docker-compose.yml`
 
@@ -118,16 +139,16 @@ services:
       - ENV_VARIABLE=value 
 ```
 
-### Build Docker Compose
+## Build Docker Compose
 
 ```
 docker compose build
 ```
 
-### Run Docker Compose
+## Run Docker Compose
 
 ```
 docker compose up
 ```
 
-## Etape 3
+# Etape 3
