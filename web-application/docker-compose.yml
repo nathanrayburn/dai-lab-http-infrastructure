@@ -1,0 +1,10 @@
+services:
+  myapp:
+    image: nginx-custom:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./app:/app
+      - ./dai-static-web-server:/usr/share/nginx/html
+    environment:
+      - ENV_VARIABLE=value 

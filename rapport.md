@@ -2,17 +2,64 @@
 [Github dai-http-infra](https://github.com/nathanrayburn/dai-lab-http-infrastructure)
 ## Etape 1
 
-- Créer le fichier docker
-- Créer le fichier conf nginx
+### Create Docker File
+
+Remarque
+
+Concernant les volumes, nous devions indiquer l'emplacement local de notre en occurence dans notre configuration c'est `./dai-static-web-server` et qui sera traduit dans l'emplacement du container à `/user/share/nginx/html`.
+
+```
+services:
+  myapp:
+    image: nginx-custom:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./app:/app
+      - ./dai-static-web-server:/usr/share/nginx/html
+    environment:
+      - ENV_VARIABLE=value 
+```
+
+### Create nginx configuration  file
+
+```
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /var/run/nginx.pid;
+
+# Events block
+events {
+    worker_connections 1024;
+}
+
+http {
+
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    # Server block
+    server {
+        listen 80;
+        server_name localhost;
+
+        location / {
+            root /usr/share/nginx/html;
+            index /src/site/index.html index.htm; # absolute path to index.html
+        }
+    }
+}
+```
 
 Build le container
 ```
-docker build -t nginx .
+docker build -t nginx-custom .
 ```
 Run le container
 
 ```
-docker run -p 8080:80 nginx
+docker run -p 8080:80 nginx-custom
 ```
 
 ### Tailwind CSS
@@ -48,9 +95,39 @@ module.exports = {
 @tailwind utilities;
 ```
 
-#### Start the Tailwind CLI buil
+#### Start the Tailwind CLI build
 
 ```
 npx tailwindcss -i ./src/input.css -o ./dist/output.css --watch
 ```
+## Etape 2
 
+### Create Docker compose file
+
+`docker-compose.yml`
+
+```
+services:
+  myapp:
+    image: nginx-custom:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./app:/app
+    environment:
+      - ENV_VARIABLE=value 
+```
+
+### Build Docker Compose
+
+```
+docker compose build
+```
+
+### Run Docker Compose
+
+```
+docker compose up
+```
+
+## Etape 3
