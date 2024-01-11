@@ -2,15 +2,15 @@
 Autheurs : Nathan Rayburn, Ouweis Harun
 # Table des matières
 
+- [Rapport mise en service](#rapport-mise-en-service)
+- [Table des matières](#table-des-matières)
 - [Etape 0](#etape-0)
 - [Etape 1](#etape-1)
-    - [Create Docker File](#create-docker-file)
-  - [Create nginx configuration file](#create-nginx-configuration-file)
-  - [Build le container](#build-le-container)
-  - [Run le container](#run-le-container)
+  - [Create Docker File](#create-docker-file)
+  - [Create nginx configuration  file](#create-nginx-configuration--file)
   - [Tailwind CSS](#tailwind-css)
     - [Install Tailwind css](#install-tailwind-css)
-    - [Configuration of the template](#configuration-of-the-template)
+    - [Configurataion of the template](#configurataion-of-the-template)
     - [Add Tailwind directives to css](#add-tailwind-directives-to-css)
     - [Start the Tailwind CLI build](#start-the-tailwind-cli-build)
 - [Etape 2](#etape-2)
@@ -18,6 +18,13 @@ Autheurs : Nathan Rayburn, Ouweis Harun
   - [Build Docker Compose](#build-docker-compose)
   - [Run Docker Compose](#run-docker-compose)
 - [Etape 3](#etape-3)
+  - [Javalin To-Do List API - HTTP Requests](#javalin-to-do-list-api---http-requests)
+    - [1. Get All To-Dos and a single one](#1-get-all-to-dos-and-a-single-one)
+    - [2. Create a To-do Json format](#2-create-a-to-do-json-format)
+    - [3. Update the To-do to done](#3-update-the-to-do-to-done)
+  - [Create Docker File](#create-docker-file-1)
+  - [Create Docker Compose](#create-docker-compose)
+
 
 # Etape 0
 [Github dai-http-infra](https://github.com/nathanrayburn/dai-lab-http-infrastructure)
