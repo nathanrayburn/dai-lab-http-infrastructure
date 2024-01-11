@@ -22,6 +22,7 @@ Autheurs : Nathan Rayburn, Ouweis Harun
     - [1. Get All To-Dos and a single one](#1-get-all-to-dos-and-a-single-one)
     - [2. Create a To-do Json format](#2-create-a-to-do-json-format)
     - [3. Update the To-do to done](#3-update-the-to-do-to-done)
+    - [4. Delete the Todo](#4-delete-the-todo)
   - [Create Docker File](#create-docker-file-1)
   - [Create Docker Compose](#create-docker-compose)
 
@@ -187,6 +188,15 @@ curl -X POST http://localhost:7000/api/todos/ -H "Content-Type: application/json
 ```bash
 # Replace {id} with the ID of the To-Do item to update and set it to done or back to false
 curl -X PUT http://localhost:7000/api/todos/{id}?completed=true
+
+```
+
+### 4. Delete the Todo
+- **HTTP Method**: DELETE
+- **Command**: 
+```bash
+# Replace {id} with the ID of the To-Do item to delete
+curl -X DELETE http://localhost:7000/api/todos/{id}
 
 ```
 
