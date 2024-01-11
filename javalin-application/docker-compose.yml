@@ -1,0 +1,6 @@
+services:
+  todo-api:
+    image: server-todo-api:latest
+    ports:
+      - "7000:7000"
+    build: .

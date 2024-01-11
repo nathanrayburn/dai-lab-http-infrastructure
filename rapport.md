@@ -153,3 +153,77 @@ docker compose up
 ```
 
 # Etape 3
+## Javalin To-Do List API - HTTP Requests
+
+### 1. Get All To-Dos and a single one
+
+- **HTTP Method**: GET
+- **Command**: 
+```bash
+
+  curl -X GET http://localhost:7000/api/todos 
+
+  # replace id with the ID of the actual item
+  curl -X GET http://localhost:7000/api/todos/{id}
+  ```
+### 2. Create a To-do Json format
+- **HTTP Method**: POST
+- **Command**: 
+```bash
+# Replace "New Task" and false with the desired title and completion status
+curl -X POST http://localhost:7000/api/todos/ -H "Content-Type: application/json" -d '{"title":"New Task", "completed":false}'
+
+```
+### 3. Update the To-do to done
+- **HTTP Method**: PUT
+- **Command**: 
+```bash
+# Replace {id} with the ID of the To-Do item to update and set it to done or back to false
+curl -X PUT http://localhost:7000/api/todos/{id}?completed=true
+
+```
+
+## Create Docker File
+
+Change the file name of the server which contains the dependencies.  I changed it to "server-todo.jar". 
+
+```
+FROM openjdk:21
+
+WORKDIR /app
+
+COPY ./javalin/target/server-todo.jar /app
+
+CMD ["java", "-jar", "server-todo.jar"]
+
+```
+
+Build the container
+
+```bash
+docker build -t server-todo-api .
+```
+
+## Create Docker Compose
+
+
+```
+services:
+  todo-api:
+    image: server-todo-api:latest
+    ports:
+      - "7000:7000"
+    build: .
+
+```
+
+Build docker image
+
+```bash
+docker compose build
+```
+
+Run docker compose
+```bash
+docker compose up
+```
