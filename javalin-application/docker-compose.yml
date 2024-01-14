@@ -1,6 +1,22 @@
+version: '3.7'
+
 services:
   todo-api:
-    image: server-todo-api:latest
-    ports:
-      - "7000:7000"
     build: .
+    image: server-todo-api:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.todo-api.rule=Host(`localhost`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.todo-api.entrypoints=websecure"
+      - "traefik.http.routers.todo-api.tls.certresolver=myresolver"
+      - "traefik.http.services.todo-api.loadbalancer.server.port=7000"
+      - "traefik.http.services.todo-api.loadbalancer.sticky.cookie=true"  # Sticky sessions
+    networks:
+      - web
+    deploy:
+      mode: replicated
+      replicas: 3
+
+networks:
+  web:
+    external: true
