@@ -25,6 +25,8 @@ Autheurs : Nathan Rayburn, Ouweis Harun
     - [4. Delete the Todo](#4-delete-the-todo)
   - [Create Docker File](#create-docker-file-1)
   - [Create Docker Compose](#create-docker-compose)
+- [Etape 6](#etape-6)
+
 
 
 # Etape 0
@@ -243,4 +245,16 @@ docker compose build
 Run docker compose
 ```bash
 docker compose up
+```
+
+
+# Etape 6
+
+To be able to handle load balancing with sticky session. 
+
+```
+      - "traefik.http.services.todo-api.loadbalancer.sticky.cookie=true"  # Sticky sessions
+      - "traefik.http.services.todo-api.loadbalancer.sticky=true"
+      - "traefik.http.services.todo-api.loadbalancer.sticky.cookie.name=StickyCookie"
+      - "traefik.http.services.todo-api.loadbalancer.sticky.cookie.secure=true"
 ```

@@ -11,6 +11,9 @@ services:
       - "traefik.http.routers.todo-api.tls.certresolver=myresolver"
       - "traefik.http.services.todo-api.loadbalancer.server.port=7000"
       - "traefik.http.services.todo-api.loadbalancer.sticky.cookie=true"  # Sticky sessions
+      - "traefik.http.services.todo-api.loadbalancer.sticky=true"
+      - "traefik.http.services.todo-api.loadbalancer.sticky.cookie.name=StickyCookie"
+      - "traefik.http.services.todo-api.loadbalancer.sticky.cookie.secure=true"
     networks:
       - web
     deploy:
