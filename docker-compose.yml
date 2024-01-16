@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  todo-api:
+    image: server-todo-api:latest
+    build:
+      context: ./javalin-application
+    ports:
+      - "7000:7000"
+
+  webapp:
+    image: nginx-custom:latest
+    build: 
+      context: ./web-application
+    ports:
+      - "8080:80"
+    volumes:
+      - ./web-application/dai-static-web-server:/usr/share/nginx/html
+
