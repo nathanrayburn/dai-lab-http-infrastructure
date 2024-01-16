@@ -8,31 +8,45 @@ Authors: Nathan Rayburn, Ouweis Harun
 - [Step 0](#step-0)
 - [Step 1](#step-1)
   - [Create Docker File](#create-docker-file)
-  - [Create nginx configuration file](#create-nginx-configuration-file)
+  - [Create nginx configuration  file](#create-nginx-configuration--file)
   - [Tailwind CSS](#tailwind-css)
-    - [Install Tailwind CSS](#install-tailwind-css)
-    - [Configuration of the Template](#configuration-of-the-template)
-    - [Add Tailwind Directives to CSS](#add-tailwind-directives-to-css)
-    - [Start the Tailwind CLI Build](#start-the-tailwind-cli-build)
+    - [Install Tailwind css](#install-tailwind-css)
+    - [Configurataion of the template](#configurataion-of-the-template)
+    - [Add Tailwind directives to css](#add-tailwind-directives-to-css)
+    - [Start the Tailwind CLI build](#start-the-tailwind-cli-build)
 - [Step 2](#step-2)
-  - [Create Docker Compose File](#create-docker-compose-file)
+  - [Create Docker compose file](#create-docker-compose-file)
   - [Build Docker Compose](#build-docker-compose)
   - [Run Docker Compose](#run-docker-compose)
 - [Step 3](#step-3)
   - [Javalin To-Do List API - HTTP Requests](#javalin-to-do-list-api---http-requests)
-    - [1. Get All To-Dos and a Single One](#1-get-all-to-dos-and-a-single-one)
-    - [2. Create a To-Do in JSON Format](#2-create-a-to-do-in-json-format)
-    - [3. Update the To-Do to Done](#3-update-the-to-do-to-done)
-    - [4. Delete the To-Do](#4-delete-the-to-do)
+    - [1. Get All To-Dos and a single one](#1-get-all-to-dos-and-a-single-one)
+    - [2. Create a To-do Json format](#2-create-a-to-do-json-format)
+    - [3. Update the To-do to done](#3-update-the-to-do-to-done)
+    - [4. Delete the Todo](#4-delete-the-todo)
   - [Create Docker File](#create-docker-file-1)
   - [Create Docker Compose](#create-docker-compose)
-- [Step 4](#step-4)
-- [Step 5](#step-5)
-- [Step 6](#step-6)
+  - [Step 4: Reverse Proxy with Traefik TODO ADD RESULTS](#step-4-reverse-proxy-with-traefik-todo-add-results)
+    - [Modifications Made](#modifications-made)
+    - [Testing Procedure](#testing-procedure)
+  - [Step 5: Scalability and Load Balancing TODO ADD RESULTS](#step-5-scalability-and-load-balancing-todo-add-results)
+    - [Overview](#overview)
+    - [Modifications Made](#modifications-made-1)
+    - [Testing Procedure](#testing-procedure-1)
+    - [Results and Observations](#results-and-observations)
+  - [Step 6: Implementing Sticky Sessions TODO ADD RESULTS](#step-6-implementing-sticky-sessions-todo-add-results)
+    - [Configuration Changes](#configuration-changes)
+    - [Demonstration and Testing](#demonstration-and-testing)
+    - [Conclusion](#conclusion)
+  - [Step 7: Securing Traefik with HTTPS](#step-7-securing-traefik-with-https)
+    - [Configuration Changes](#configuration-changes-1)
+    - [Testing and Validation](#testing-and-validation)
+    - [Conclusion](#conclusion-1)
+
 
 
 # Step 0
-[Github dai-http-infra](https://github.com/nathanrayburn/dai-lab-http-infrastructure)
+[Github dai-http-infrastructure](https://github.com/nathanrayburn/dai-lab-http-infrastructure)
 
 # Step 1
 
@@ -365,4 +379,52 @@ To demonstrate the effectiveness of the sticky session configuration, we conduct
 
 The implementation of sticky sessions for the dynamic API server and the maintenance of round-robin load balancing for the static server were successful. This configuration allows us to handle stateful interactions in our dynamic applications effectively while still evenly distributing stateless traffic across our static resources. The test results confirm the functionality of our load balancing strategy under varying conditions.
 
+
+Based on the updates you've made to your `docker-compose.yml` file for Step 7, here's a report in English detailing the implementation of HTTPS security using Traefik:
+
 ---
+
+## Step 7: Securing Traefik with HTTPS
+
+### Configuration Changes
+
+We updated our `docker-compose.yml` file to enable HTTPS in our Traefik setup. The key modifications include:
+
+1. **Traefik Service Configuration:**
+   - Updated the Traefik service to expose port 443 for HTTPS.
+   - Mounted two volumes:
+     - `./certificates:/etc/traefik/certificates` to provide access to SSL certificates.
+     - `./traefik.yaml:/etc/traefik/traefik.yaml` for Traefik's main configuration.
+
+2. **Todo-API Service:**
+   - Updated labels to configure the `todo-api` service for HTTPS.
+   - Specified `traefik.http.routers.todo-api.tls=true` and set the entrypoint to `websecure`.
+   - Configured the router rule for HTTPS and kept the sticky session settings.
+   - Defined the service's load balancer server port as 7000.
+
+3. **Webapp Service:**
+   - Configured labels for the `webapp` service to use HTTPS.
+   - Set `traefik.http.routers.froom-static.tls=true` and the entrypoint to `websecure`.
+
+### Testing and Validation
+
+To validate our HTTPS setup, the following steps were carried out:
+
+1. **Starting the Services:**
+   - Ran `docker compose up` to start the updated services, including Traefik with the new HTTPS configuration.
+
+2. **Accessing the Services via HTTPS:**
+   - Accessed the `todo-api` service using `https://localhost/api`.
+   - Accessed the `webapp` service via `https://localhost`.
+   - Verified that both services were accessible over HTTPS, indicating successful routing through Traefik.
+
+3. **Certificate Verification:**
+   - Inspected the SSL certificate information in the browser to confirm that our self-signed certificates were being used.
+   - Checked for any SSL-related errors or warnings.
+
+4. **Monitoring Traefik Dashboard:**
+   - Accessed the Traefik dashboard on `https://localhost:8080` to ensure that HTTPS endpoints were correctly configured and operational.
+
+### Conclusion
+
+The implementation of HTTPS in our web infrastructure adds a significant layer of security, essential for any real-world web application. This setup ensures encrypted communication between clients and the reverse proxy, providing a secure environment for data exchange. Our testing confirms that the HTTPS configuration is correct and functioning as intended.
