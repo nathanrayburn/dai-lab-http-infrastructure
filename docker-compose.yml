@@ -2,38 +2,29 @@ version: '3.8'
 services:
   traefik:
     image: traefik:v2.10
-    command:
-      - --api.insecure=true
-      - --providers.docker
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
+    command: --api.insecure=true --providers.docker
     ports:
-      - "80:80"  # Entry point for HTTP
-      - "8080:8080" # Dashboard
+      - "443:443"
+      - "8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`localhost`)"
-      - "traefik.http.routers.api.service=api@internal"
-      - "traefik.http.services.api.loadbalancer.server.port=8080"
-      
+      - ./certificates:/etc/traefik/certificates
+      - ./traefik.yaml:/etc/traefik/traefik.yaml
 
   todo-api:
     image: server-todo-api:latest
     build:
       context: ./javalin-application
     labels:
-      - "traefik.enable=true"
       - "traefik.http.routers.todo-api.rule=Host(`localhost`) && PathPrefix(`/api`)"
-      - "traefik.http.routers.todo-api.entrypoints=web"
       - "traefik.http.services.todo-api.loadbalancer.sticky=true"
       - "traefik.http.services.todo-api.loadbalancer.sticky.cookie.name=StickyCookie"
       - "traefik.http.services.todo-api.loadbalancer.sticky.cookie.secure=true"
-    expose:
-      - "7000"
+      - "traefik.http.routers.todo-api.tls=true"
+      - "traefik.http.routers.todo-api.entrypoints=websecure"
     deploy:
       replicas: 5
+
   webapp:
     image: nginx-custom:latest
     build:
@@ -41,10 +32,8 @@ services:
     volumes:
       - ./web-application/dai-static-web-server:/usr/share/nginx/html
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.webapp.rule=Host(`localhost`)"
-      - "traefik.http.routers.webapp.entrypoints=web"
-    expose:
-      - "80"
+      - "traefik.http.routers.froom-static.rule=Host(`localhost`)"
+      - "traefik.http.routers.froom-static.tls=true"
+      - "traefik.http.routers.froom-static.entrypoints=websecure"
     deploy:
-      replicas: 5
+      replicas: 1
