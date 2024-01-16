@@ -17,6 +17,7 @@ services:
       - "traefik.http.routers.api.rule=Host(`localhost`)"
       - "traefik.http.routers.api.service=api@internal"
       - "traefik.http.services.api.loadbalancer.server.port=8080"
+      
 
   todo-api:
     image: server-todo-api:latest
@@ -26,6 +27,9 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.todo-api.rule=Host(`localhost`) && PathPrefix(`/api`)"
       - "traefik.http.routers.todo-api.entrypoints=web"
+      - "traefik.http.services.todo-api.loadbalancer.sticky=true"
+      - "traefik.http.services.todo-api.loadbalancer.sticky.cookie.name=StickyCookie"
+      - "traefik.http.services.todo-api.loadbalancer.sticky.cookie.secure=true"
     expose:
       - "7000"
     deploy:
