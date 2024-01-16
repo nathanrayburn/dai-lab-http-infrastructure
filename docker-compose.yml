@@ -28,7 +28,8 @@ services:
       - "traefik.http.routers.todo-api.entrypoints=web"
     expose:
       - "7000"
-
+    deploy:
+      replicas: 5
   webapp:
     image: nginx-custom:latest
     build:
@@ -41,3 +42,5 @@ services:
       - "traefik.http.routers.webapp.entrypoints=web"
     expose:
       - "80"
+    deploy:
+      replicas: 5
