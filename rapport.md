@@ -1,46 +1,48 @@
-# Rapport mise en service
-Autheurs : Nathan Rayburn, Ouweis Harun
-# Table des matières
+# Service Commissioning Report
+Authors: Nathan Rayburn, Ouweis Harun
 
-- [Rapport mise en service](#rapport-mise-en-service)
-- [Table des matières](#table-des-matières)
-- [Etape 0](#etape-0)
-- [Etape 1](#etape-1)
+# Table of Contents
+
+- [Service Commissioning Report](#service-commissioning-report)
+- [Table of Contents](#table-of-contents)
+- [Step 0](#step-0)
+- [Step 1](#step-1)
   - [Create Docker File](#create-docker-file)
-  - [Create nginx configuration  file](#create-nginx-configuration--file)
+  - [Create nginx configuration file](#create-nginx-configuration-file)
   - [Tailwind CSS](#tailwind-css)
-    - [Install Tailwind css](#install-tailwind-css)
-    - [Configurataion of the template](#configurataion-of-the-template)
-    - [Add Tailwind directives to css](#add-tailwind-directives-to-css)
-    - [Start the Tailwind CLI build](#start-the-tailwind-cli-build)
-- [Etape 2](#etape-2)
-  - [Create Docker compose file](#create-docker-compose-file)
+    - [Install Tailwind CSS](#install-tailwind-css)
+    - [Configuration of the Template](#configuration-of-the-template)
+    - [Add Tailwind Directives to CSS](#add-tailwind-directives-to-css)
+    - [Start the Tailwind CLI Build](#start-the-tailwind-cli-build)
+- [Step 2](#step-2)
+  - [Create Docker Compose File](#create-docker-compose-file)
   - [Build Docker Compose](#build-docker-compose)
   - [Run Docker Compose](#run-docker-compose)
-- [Etape 3](#etape-3)
+- [Step 3](#step-3)
   - [Javalin To-Do List API - HTTP Requests](#javalin-to-do-list-api---http-requests)
-    - [1. Get All To-Dos and a single one](#1-get-all-to-dos-and-a-single-one)
-    - [2. Create a To-do Json format](#2-create-a-to-do-json-format)
-    - [3. Update the To-do to done](#3-update-the-to-do-to-done)
-    - [4. Delete the Todo](#4-delete-the-todo)
+    - [1. Get All To-Dos and a Single One](#1-get-all-to-dos-and-a-single-one)
+    - [2. Create a To-Do in JSON Format](#2-create-a-to-do-in-json-format)
+    - [3. Update the To-Do to Done](#3-update-the-to-do-to-done)
+    - [4. Delete the To-Do](#4-delete-the-to-do)
   - [Create Docker File](#create-docker-file-1)
   - [Create Docker Compose](#create-docker-compose)
-- [Etape 6](#etape-6)
+- [Step 4](#step-4)
+- [Step 5](#step-5)
+- [Step 6](#step-6)
 
 
-
-# Etape 0
+# Step 0
 [Github dai-http-infra](https://github.com/nathanrayburn/dai-lab-http-infrastructure)
 
-# Etape 1
+# Step 1
 
 ## Create Docker File
 
-Remarque
+Note:
 
-Concernant les volumes, nous devions indiquer l'emplacement local de notre en occurence dans notre configuration c'est `./dai-static-web-server` et qui sera traduit dans l'emplacement du container à `/user/share/nginx/html`.
+Regarding volumes, we had to specify the local location, which in our configuration is `./dai-static-web-server`. This will be mapped to the container location at `/usr/share/nginx/html`.
 
-```
+```yaml
 services:
   myapp:
     image: nginx-custom:latest
@@ -84,13 +86,14 @@ http {
 }
 ```
 
-Build le container
-```
+Build the container:
+
+```bash
 docker build -t nginx-custom .
 ```
-Run le container
+Run the container:
 
-```
+```bash
 docker run -p 8080:80 nginx-custom
 ```
 
@@ -98,7 +101,7 @@ docker run -p 8080:80 nginx-custom
 
 ### Install Tailwind css
 
-```
+```bash
 npm install -D tailwindcss
 npx tailwindcss init
 ```
@@ -107,7 +110,7 @@ npx tailwindcss init
 
 `tailwind.config.js`
 
-```
+```javascript
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{html,js}"],
@@ -121,7 +124,7 @@ module.exports = {
 
 `src/input.css`
 
-```
+```css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -129,16 +132,16 @@ module.exports = {
 
 ### Start the Tailwind CLI build
 
-```
+```bash
 npx tailwindcss -i ./src/input.css -o ./dist/output.css --watch
 ```
-# Etape 2
+# Step 2
 
 ## Create Docker compose file
 
 `docker-compose.yml`
 
-```
+```yaml
 services:
   myapp:
     image: nginx-custom:latest
@@ -152,17 +155,17 @@ services:
 
 ## Build Docker Compose
 
-```
+```bash
 docker compose build
 ```
 
 ## Run Docker Compose
 
-```
+```bash
 docker compose up
 ```
 
-# Etape 3
+# Step 3
 ## Javalin To-Do List API - HTTP Requests
 
 ### 1. Get All To-Dos and a single one
@@ -206,7 +209,7 @@ curl -X DELETE http://localhost:7000/api/todos/{id}
 
 Change the file name of the server which contains the dependencies.  I changed it to "server-todo.jar". 
 
-```
+```Dockerfile
 FROM openjdk:21
 
 WORKDIR /app
@@ -217,7 +220,7 @@ CMD ["java", "-jar", "server-todo.jar"]
 
 ```
 
-Build the container
+Build the container:
 
 ```bash
 docker build -t server-todo-api .
@@ -225,8 +228,9 @@ docker build -t server-todo-api .
 
 ## Create Docker Compose
 
+`docker-compose.yml` snippet for the `todo-api` service:
 
-```
+```yaml
 services:
   todo-api:
     image: server-todo-api:latest
@@ -236,25 +240,129 @@ services:
 
 ```
 
-Build docker image
+Build docker image:
 
 ```bash
 docker compose build
 ```
 
-Run docker compose
+Run docker compose:
 ```bash
 docker compose up
 ```
 
 
-# Etape 6
+## Step 4: Reverse Proxy with Traefik TODO ADD RESULTS
 
-To be able to handle load balancing with sticky session. 
+### Modifications Made
 
-```
-      - "traefik.http.services.todo-api.loadbalancer.sticky.cookie=true"  # Sticky sessions
-      - "traefik.http.services.todo-api.loadbalancer.sticky=true"
-      - "traefik.http.services.todo-api.loadbalancer.sticky.cookie.name=StickyCookie"
-      - "traefik.http.services.todo-api.loadbalancer.sticky.cookie.secure=true"
-```
+In this step, we have integrated Traefik as a reverse proxy to manage the traffic to our static web server (webapp) and dynamic API server (todo-api). The `docker-compose.yml` file has been updated as follows:
+
+1. **Traefik Service Added:**
+   - A new service named `traefik` was added with the Traefik image version 2.10.
+   - Configuration commands were set to enable an insecure API, Docker provider, and define entrypoints for HTTP (`:80`) and HTTPS (`:443`).
+   - Ports 80 (HTTP) and 8080 (Traefik dashboard) were exposed.
+   - Labels for Traefik configuration were added to define routing rules and service details.
+
+2. **Todo-API Service:**
+   - Labels added to enable Traefik integration, with routing rules specifying that any request to `localhost` with a path prefix of `/api` should be directed to this service.
+   - The `expose` directive was used to make the service available on port 7000 within the Docker network.
+
+3. **Webapp Service:**
+   - Labels added to enable Traefik integration, with routing rules specifying that requests to `localhost` should be directed to this service.
+   - The `expose` directive was used for port 80, similar to the todo-api service.
+
+### Testing Procedure
+
+To test the updated configuration, the following steps were undertaken:
+
+1. **Starting the Services:**
+   - Ran the command `docker compose up` to start all services, including Traefik, todo-api, and webapp.
+   - Ensured that no errors occurred during the startup and all services were running correctly.
+
+2. **Verifying Traefik Dashboard:**
+   - Accessed the Traefik dashboard on `http://localhost:8080` to check if the services were properly detected and routes were correctly configured.
+   - Confirmed that the routing rules for both webapp and todo-api were displayed and correctly pointing to their respective entrypoints and ports.
+
+3. **Testing Webapp Service:**
+   - Accessed the webapp service by navigating to `http://localhost` in a browser.
+   - Verified that the static website was served correctly without any issues.
+
+4. **Testing Todo-API Service:**
+   - Accessed the todo-api service by sending requests to `http://localhost/api`.
+   - Performed various API operations (CRUD) to ensure that the API was responding correctly and the data manipulation was as expected.
+
+5. **Checking Load Distribution:**
+   - Sent multiple requests to both webapp and todo-api to observe the load handling and routing effectiveness of Traefik.
+
+By completing these tests, we were able to confirm that the integration of Traefik as a reverse proxy was successful and both the static and dynamic services were functioning correctly under the new configuration.
+
+
+## Step 5: Scalability and Load Balancing TODO ADD RESULTS
+
+### Overview
+
+In this step, we focused on enhancing the scalability and load-balancing capabilities of our web infrastructure. To achieve this, we configured our services to run multiple replicas, allowing for better distribution of incoming traffic and improved reliability.
+
+### Modifications Made
+
+1. **Configuration for Multiple Replicas:**
+   - For both the `todo-api` and `webapp` services, we added a `deploy` section in our `docker-compose.yml` file.
+   - Specified `replicas: 5` for each service, enabling the deployment of 5 instances of each service.
+   - This configuration was intended to provide an initial setup for load balancing and to test the scalability.
+
+2. **Dynamic Scaling:**
+   - To test the dynamic scalability, we used the command `sudo docker compose up --scale [service-name]=[number-of-replicas] -d`.
+   - We experimented with scaling up and down, increasing the number of instances to 10 and then reducing them to 3, for the `froom-static` service as an example.
+
+### Testing Procedure
+
+1. **Scaling Up:**
+   - We executed the command `sudo docker compose up --scale froom-static=10 -d` to scale up the `froom-static` service to 10 instances.
+   - Verified by running `sudo docker compose ps`, which showed all 10 instances running as expected.
+
+2. **Observing Load Distribution:**
+   - We monitored the load distribution across the 10 instances to ensure that the traffic was evenly spread, indicating successful load balancing.
+
+3. **Scaling Down:**
+   - To test the downscaling, we executed `sudo docker compose up --scale froom-static=3 -d`.
+   - Again, we used `sudo docker compose ps` to confirm that the number of running instances was successfully reduced to 3.
+
+### Results and Observations
+
+(Here, you can insert your screenshots and observations regarding the load distribution, response times, and any other relevant data you collected during the testing.)
+
+
+
+## Step 6: Implementing Sticky Sessions TODO ADD RESULTS
+
+### Configuration Changes
+
+We modified our `docker-compose.yml` file to implement sticky sessions for the `froom-api` service. The following labels were added to the service configuration:
+
+1. **Activation of Sticky Sessions:**
+   - Added `"traefik.http.services.froom-api.loadbalancer.sticky=true"` to enable sticky sessions.
+
+2. **Cookie Configuration:**
+   - Specified a cookie name for the sticky session using `"traefik.http.services.froom-api.loadbalancer.sticky.cookie.name=StickyCookie"`.
+   - Enhanced security by adding `"traefik.http.services.froom-api.loadbalancer.sticky.cookie.secure=true"`.
+
+### Demonstration and Testing
+
+To demonstrate the effectiveness of the sticky session configuration, we conducted the following tests:
+
+1. **Sticky Sessions for API Service:**
+   - Performed 9 consecutive page refreshes on the API endpoint.
+   - Monitored the server logs to verify that all requests were consistently handled by the same instance of the `froom-api` service (`dai-lab-http-infrastructure-froom-api-1`).
+   - This consistent routing to the same instance confirmed that sticky sessions were working as intended.
+
+2. **Round-Robin for Static Website:**
+   - Executed 5 page refreshes on the static website.
+   - Observed the server logs to check the distribution of requests across different instances of the `froom-static` service.
+   - The logs indicated requests being handled by various instances (`dai-lab-http-infrastructure-froom-static-1`, `froom-static-2`, etc.), demonstrating that round-robin load balancing was still active for the static server.
+
+### Conclusion
+
+The implementation of sticky sessions for the dynamic API server and the maintenance of round-robin load balancing for the static server were successful. This configuration allows us to handle stateful interactions in our dynamic applications effectively while still evenly distributing stateless traffic across our static resources. The test results confirm the functionality of our load balancing strategy under varying conditions.
+
+---
