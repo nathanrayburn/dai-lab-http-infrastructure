@@ -414,7 +414,7 @@ To validate our HTTPS setup, the following steps were carried out:
    - Ran `docker compose up` to start the updated services, including Traefik with the new HTTPS configuration.
 
 2. **Accessing the Services via HTTPS:**
-   - Accessed the `todo-api` service using `https://localhost/api`.
+   - Accessed the `todo-api` service using `https://localhost/api/todos`.
    - Accessed the `webapp` service via `https://localhost`.
    - Verified that both services were accessible over HTTPS, indicating successful routing through Traefik.
 

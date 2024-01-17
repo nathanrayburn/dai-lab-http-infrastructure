@@ -38,3 +38,11 @@ services:
       - "traefik.http.routers.froom-static.entrypoints=websecure"
     deploy:
       replicas: 1
+   # Portainer service configuration
+  portainer:
+    image: portainer/portainer-ce:latest 
+    ports:
+      - "9443:9443" 
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock 
+    restart: unless-stopped 
