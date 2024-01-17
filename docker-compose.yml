@@ -24,7 +24,7 @@ services:
       - "traefik.http.routers.todo-api.entrypoints=websecure"
       - "traefik.http.services.todo-api.loadbalancer.server.port=7000"
     deploy:
-      replicas: 5
+      replicas: 1
 
   webapp:
     image: nginx-custom:latest
