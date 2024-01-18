@@ -2,7 +2,6 @@
 Authors: Nathan Rayburn, Ouweis Harun
 
 # Table of Contents
-
 - [Service Commissioning Report](#service-commissioning-report)
 - [Table of Contents](#table-of-contents)
 - [Step 0](#step-0)
@@ -37,17 +36,27 @@ Authors: Nathan Rayburn, Ouweis Harun
   - [Step 6: Implementing Sticky Sessions TODO ADD RESULTS](#step-6-implementing-sticky-sessions-todo-add-results)
     - [Configuration Changes](#configuration-changes)
     - [Demonstration and Testing](#demonstration-and-testing)
-    - [Conclusion](#conclusion)
   - [Step 7: Securing Traefik with HTTPS](#step-7-securing-traefik-with-https)
     - [Configuration Changes](#configuration-changes-1)
     - [Testing and Validation](#testing-and-validation)
-    - [Conclusion](#conclusion-1)
+  - [Optional Step 1: Management UI with Portainer](#optional-step-1-management-ui-with-portainer)
+    - [Docker Compose Configuration for Portainer](#docker-compose-configuration-for-portainer)
+    - [Setting Up and Using Portainer](#setting-up-and-using-portainer)
+      - [Configuration:](#configuration)
+      - [Usage:](#usage)
+    - [Validation and Conclusion](#validation-and-conclusion)
+  - [Optional Step 2: Integration of API with Static Website](#optional-step-2-integration-of-api-with-static-website)
+    - [Description](#description)
+    - [Implementation Details](#implementation-details)
+    - [Testing and Validation](#testing-and-validation-1)
 
+---
 
 
 # Step 0
-[Github dai-http-infrastructure](https://github.com/nathanrayburn/dai-lab-http-infrastructure)
+[Github repository](https://github.com/nathanrayburn/dai-lab-http-infrastructure)
 
+---
 # Step 1
 
 ## Create Docker File
@@ -149,6 +158,10 @@ module.exports = {
 ```bash
 npx tailwindcss -i ./src/input.css -o ./dist/output.css --watch
 ```
+
+---
+
+
 # Step 2
 
 ## Create Docker compose file
@@ -178,6 +191,8 @@ docker compose build
 ```bash
 docker compose up
 ```
+
+---
 
 # Step 3
 ## Javalin To-Do List API - HTTP Requests
@@ -264,7 +279,7 @@ Run docker compose:
 ```bash
 docker compose up
 ```
-
+---
 
 ## Step 4: Reverse Proxy with Traefik TODO ADD RESULTS
 
@@ -311,6 +326,7 @@ To test the updated configuration, the following steps were undertaken:
 
 By completing these tests, we were able to confirm that the integration of Traefik as a reverse proxy was successful and both the static and dynamic services were functioning correctly under the new configuration.
 
+---
 
 ## Step 5: Scalability and Load Balancing TODO ADD RESULTS
 
@@ -344,9 +360,8 @@ In this step, we focused on enhancing the scalability and load-balancing capabil
 
 ### Results and Observations
 
-(Here, you can insert your screenshots and observations regarding the load distribution, response times, and any other relevant data you collected during the testing.)
 
-
+---
 
 ## Step 6: Implementing Sticky Sessions TODO ADD RESULTS
 
@@ -374,13 +389,6 @@ To demonstrate the effectiveness of the sticky session configuration, we conduct
    - Executed 5 page refreshes on the static website.
    - Observed the server logs to check the distribution of requests across different instances of the `froom-static` service.
    - The logs indicated requests being handled by various instances (`dai-lab-http-infrastructure-froom-static-1`, `froom-static-2`, etc.), demonstrating that round-robin load balancing was still active for the static server.
-
-### Conclusion
-
-The implementation of sticky sessions for the dynamic API server and the maintenance of round-robin load balancing for the static server were successful. This configuration allows us to handle stateful interactions in our dynamic applications effectively while still evenly distributing stateless traffic across our static resources. The test results confirm the functionality of our load balancing strategy under varying conditions.
-
-
-Based on the updates you've made to your `docker-compose.yml` file for Step 7, here's a report in English detailing the implementation of HTTPS security using Traefik:
 
 ---
 
@@ -425,6 +433,102 @@ To validate our HTTPS setup, the following steps were carried out:
 4. **Monitoring Traefik Dashboard:**
    - Accessed the Traefik dashboard on `https://localhost:8080` to ensure that HTTPS endpoints were correctly configured and operational.
 
-### Conclusion
 
-The implementation of HTTPS in our web infrastructure adds a significant layer of security, essential for any real-world web application. This setup ensures encrypted communication between clients and the reverse proxy, providing a secure environment for data exchange. Our testing confirms that the HTTPS configuration is correct and functioning as intended.
+---
+
+## Optional Step 1: Management UI with Portainer
+
+For the first optional step, we chose to integrate Portainer into our web infrastructure. Portainer is a user-friendly tool that simplifies the management and monitoring of Docker containers. Its ease of use and stability make it an ideal choice for our project.
+
+### Docker Compose Configuration for Portainer
+
+To include Portainer in our setup, we updated the `docker-compose.yml` file with the following configuration:
+
+```yaml
+# Portainer service configuration
+portainer:
+  image: portainer/portainer-ce:latest
+  ports:
+    - "9443:9443"
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+  restart: unless-stopped
+```
+
+This configuration ensures that Portainer is set up to manage the Docker containers running as part of our web infrastructure.
+
+### Setting Up and Using Portainer
+
+#### Configuration:
+
+1. **Accessing Portainer:**
+   - Open a browser and navigate to `https://localhost:9443/`.
+   - Set up a user account as per the on-screen instructions.
+
+![Alt text](Login.png)
+
+#### Usage:
+
+1. **Selecting the Environment:**
+   - Initially, select the appropriate Docker environment to manage within Portainer.
+
+2. **Managing Containers:**
+   - Navigate to the 'Containers' section to view all active containers.
+   - Containers can be managed directly from this interface, with options to start, stop, and modify settings.
+
+![Alt text](Manage_container.png)
+![Alt text](manage_container_2.png)
+
+3. **Duplicating a Container:**
+   - To duplicate a container, select it and click on 'Duplicate/Edit'.
+   - In the duplication interface, rename the new container and adjust settings as required.
+   - Disable the 'Always pull image' option if not needed.
+   - Additional configurations can be added at this stage.
+
+![Alt text](Duplicate.png)
+![Alt text](Container_config.png)
+
+4. **Observing the New Container:**
+   - Once the duplication process is complete, the new container appears in the cluster.
+   - It's now operational and can be interacted with like any other container in the environment.
+
+![Alt text](Finish.png)
+
+### Validation and Conclusion
+
+As a validation step, users can interact with the newly added container to ensure it functions as intended within the infrastructure. The integration of Portainer significantly simplifies the management of our Docker containers, providing a visual and intuitive interface for controlling and monitoring our web infrastructure.
+
+---
+
+## Optional Step 2: Integration of API with Static Website
+
+### Description
+
+The aim of this step was to bridge our static web page with the dynamic content served by our API. We achieved this by implementing AJAX (Asynchronous JavaScript and XML) calls to the API server, using JavaScript, to periodically fetch and display data on the static webpage.
+
+### Implementation Details
+
+1. **JavaScript Integration:**
+   - Added a new JavaScript file, `script.js`, to our project structure.
+   - Included `script.js` in the HTML page to handle the API requests and data rendering.
+
+2. **HTML Page Modifications:**
+   - Enhanced the existing HTML page to include a section for displaying TODO list items.
+   - Used Alpine.js, a minimal framework for composing JavaScript behavior in markup, to facilitate dynamic content rendering.
+
+3. **JavaScript Functionality:**
+   - Implemented an `init` function within Alpine.js's `todoList` component to perform a `GET` request to our API server.
+   - Utilized the Fetch API to make asynchronous requests to the API endpoint `https://localhost/api/todos`.
+   - Dynamically rendered the fetched TODO items on the webpage, displaying their ID, title, and completion status.
+
+### Testing and Validation
+
+1. **Functionality Testing:**
+   - Verified the correct inclusion of the JavaScript file and Alpine.js in the HTML page.
+   - Ensured that the `init` function was properly fetching data from the API upon loading the webpage.
+
+2. **Data Rendering:**
+   - Checked the webpage to observe the dynamic rendering of the TODO items.
+   - Ensured that each TODO item's details (ID, title, and completion status) were accurately displayed.
+
+![Alt text](Last_picture-1.png)
