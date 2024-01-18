@@ -25,17 +25,20 @@ Authors: Nathan Rayburn, Ouweis Harun
     - [4. Delete the Todo](#4-delete-the-todo)
   - [Create Docker File](#create-docker-file-1)
   - [Create Docker Compose](#create-docker-compose)
-  - [Step 4: Reverse Proxy with Traefik TODO ADD RESULTS](#step-4-reverse-proxy-with-traefik-todo-add-results)
+  - [Step 4: Reverse Proxy with Traefik](#step-4-reverse-proxy-with-traefik)
     - [Modifications Made](#modifications-made)
     - [Testing Procedure](#testing-procedure)
-  - [Step 5: Scalability and Load Balancing TODO ADD RESULTS](#step-5-scalability-and-load-balancing-todo-add-results)
+    - [Results and Observations from Demonstration Images](#results-and-observations-from-demonstration-images)
+  - [Step 5: Scalability and Load Balancing](#step-5-scalability-and-load-balancing)
     - [Overview](#overview)
     - [Modifications Made](#modifications-made-1)
     - [Testing Procedure](#testing-procedure-1)
     - [Results and Observations](#results-and-observations)
-  - [Step 6: Implementing Sticky Sessions TODO ADD RESULTS](#step-6-implementing-sticky-sessions-todo-add-results)
+  - [Step 6: Implementing Sticky Sessions](#step-6-implementing-sticky-sessions)
     - [Configuration Changes](#configuration-changes)
     - [Demonstration and Testing](#demonstration-and-testing)
+    - [Results and Observations](#results-and-observations-1)
+  - [](#)
   - [Step 7: Securing Traefik with HTTPS](#step-7-securing-traefik-with-https)
     - [Configuration Changes](#configuration-changes-1)
     - [Testing and Validation](#testing-and-validation)
@@ -281,7 +284,7 @@ docker compose up
 ```
 ---
 
-## Step 4: Reverse Proxy with Traefik TODO ADD RESULTS
+## Step 4: Reverse Proxy with Traefik
 
 ### Modifications Made
 
@@ -326,9 +329,23 @@ To test the updated configuration, the following steps were undertaken:
 
 By completing these tests, we were able to confirm that the integration of Traefik as a reverse proxy was successful and both the static and dynamic services were functioning correctly under the new configuration.
 
+### Results and Observations from Demonstration Images
+
+1. **Webapp Service Access:**
+   - The first image depicts the webapp service's login screen accessible at `http://localhost`. The presence of the sign-in interface indicates that the static content is being correctly served through the Traefik reverse proxy. The styling and layout, including input fields for the email address and password, are properly rendered, confirming that the static files are being delivered as expected.
+
+2. **API Service Response:**
+   - The second image shows the result of a GET request made to the `http://localhost/api/todos` endpoint. The browser displays an empty array `[]`, which, while not showing any data, does indicate a successful HTTP response from the API server. This response confirms that the API route is correctly configured in Traefik and that the server is running and capable of handling requests.
+
+
+![Alt text](Reverse-proxy-1.png)
+
+![Alt text](Reverse-proxy-final-1.png)
+
+
 ---
 
-## Step 5: Scalability and Load Balancing TODO ADD RESULTS
+## Step 5: Scalability and Load Balancing
 
 ### Overview
 
@@ -361,9 +378,31 @@ In this step, we focused on enhancing the scalability and load-balancing capabil
 ### Results and Observations
 
 
+- **Even Distribution of Load:**
+  - The server logs indicated that the load was evenly distributed among the available instances. For instance, the API requests were consistently served by `dai-lab-http-infrastructure-todo-api-1`, demonstrating the sticky session configuration in action.
+  - In contrast, requests to the static website were handled by different instances, such as `dai-lab-http-infrastructure-webapp-1`, `dai-lab-http-infrastructure-webapp-3`, and `dai-lab-http-infrastructure-webapp-2`. This variety in request handling confirms that round-robin distribution was functioning correctly.
+
+- **Sticky Sessions Confirmation:**
+  - The repeated GET requests on `/api/todos` showcase the sticky sessions at work, with all requests being directed to the same API instance (`dai-lab-http-infrastructure-todo-api-1`). This behavior is crucial for maintaining user session state and ensuring a consistent experience for clients.
+
+- **Round-Robin Load Balancing Validation:**
+  - The logs from the static website served by different instances on consecutive requests validate the active round-robin load balancing. The distribution of these requests across various instances illustrates Traefik's dynamic response to incoming traffic and its effective load balancing strategy.
+
+- **Scalability in Action:**
+  - The system's response to scaling commands was immediate and effective. The ability to increase and decrease the number of service instances on-demand demonstrated the agility of our deployment and the robustness of the Docker and Traefik configuration.
+
+- **Reliability and Performance:**
+  - Throughout the scaling process, no service interruptions were noted. This resilience is indicative of a well-configured distributed system capable of handling varying loads and is a testament to the stability of our infrastructure.
+
+
+![Alt text](Round-robin-1.png)
+
+
+
+
 ---
 
-## Step 6: Implementing Sticky Sessions TODO ADD RESULTS
+## Step 6: Implementing Sticky Sessions
 
 ### Configuration Changes
 
@@ -390,6 +429,20 @@ To demonstrate the effectiveness of the sticky session configuration, we conduct
    - Observed the server logs to check the distribution of requests across different instances of the `froom-static` service.
    - The logs indicated requests being handled by various instances (`dai-lab-http-infrastructure-froom-static-1`, `froom-static-2`, etc.), demonstrating that round-robin load balancing was still active for the static server.
 
+### Results and Observations
+
+
+- **Consistency in API Service:**
+  - The server logs demonstrated that all the GET requests on `/api/todos` were serviced by the same instance of the `todo-api` service, specifically `dai-lab-http-infrastructure-todo-api-1`. This was consistent across 9 separate requests, which clearly indicates that sticky sessions were effectively maintained.
+  
+- **Persistent Session Management:**
+  - The logs also showed the `getAll` function call being repeatedly handled by the same API instance, reinforcing the effectiveness of the sticky sessions. This consistency is essential for stateful interactions, where the client's session state needs to persist across multiple requests.
+
+- **Graceful Shutdown:**
+  - Upon initiating a graceful stop of the services, we observed that the system handled the termination signals as expected, allowing for a controlled shutdown of the active sessions. This is crucial to ensure data integrity and a smooth user experience even during service interruptions.
+
+
+![Alt text](Sticky-sessions-1.png)
 ---
 
 ## Step 7: Securing Traefik with HTTPS
